@@ -1,11 +1,14 @@
 
 <!DOCTYPE html>
 <html lang="en">
-  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>For My Capybara</title>
+
+  <!-- Confetti library (must be in HEAD) -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
   <style>
     :root{
       --bg1:#ffdde1;
@@ -127,10 +130,9 @@
   <!-- PAGE 1 -->
   <div class="card" id="page1">
     <img class="capy" src="capybara.png" alt="Capybara" />
-    <h1>Hey my capybara </h1>
+    <h1>Hey my capybara 🐹</h1>
     <p>Convert this binary code into English:</p>
 
-    <!-- "May 18, 2025" in ASCII binary -->
     <div class="mono">
       01001101 01100001 01111001 00100000<br>
       00110001 00111000 00101100 00100000<br>
@@ -142,7 +144,7 @@
     <div class="btnRow">
       <button id="unlockBtn">Unlock</button>
     </div>
-    <p class="smallNote">(<3)</p>
+    <p class="smallNote">(Type: May 18, 2025)</p>
   </div>
 
   <!-- PAGE 2 -->
@@ -157,7 +159,7 @@
       <button id="noBtn">No</button>
     </div>
 
-    <p class="smallNote">Try to press No … if you can 😏</p>
+    <p class="smallNote">Try to press No… if you can 😏</p>
   </div>
 
   <!-- PAGE 3 -->
@@ -165,16 +167,34 @@
     <h1>Estas segura?? 😏</h1>
     <p>Choose carefully… 😌</p>
 
-    <div class="btnRow">
+    <div class="btnRow" id="finalButtonsRow">
       <button class="finalYes">Yes</button>
       <button class="finalYes">Yes</button>
+    </div>
+
+    <!-- Big surprise image + message (HIDDEN until final Yes) -->
+    <div id="surpriseWrap" class="hidden" style="margin-top:18px;">
+      <img
+        src="capyrose.png"
+        alt="Capybara with roses"
+        style="
+          width: min(92vw, 520px);
+          max-height: 70vh;
+          object-fit: contain;
+          border-radius: 18px;
+          box-shadow: 0 20px 40px rgba(0,0,0,.18);
+        "
+      />
+      <p style="margin:14px 0 0; font-size:18px; font-weight:700;">
+        Here you go my sexy valentine ❤️🤗
+      </p>
     </div>
 
     <audio id="loveSong" loop preload="auto">
       <source src="grown_and_sexy.mp3" type="audio/mpeg">
     </audio>
 
-    <p class="smallNote">.</p>
+    <p class="smallNote">Music starts after you click “Yes”.</p>
   </div>
 
 <script>
@@ -193,11 +213,10 @@
     if(val === "may 18, 2025"){
       showPage("page2");
     }else{
-      alert("Not sah 👀 Try again.");
+      alert("Not quite 👀 Try again.");
     }
   });
 
-  // Enter key works too
   codeInput.addEventListener("keydown", (e) => {
     if(e.key === "Enter") unlockBtn.click();
   });
@@ -214,25 +233,18 @@
   function moveNoButton(){
     const areaRect = dodgeArea.getBoundingClientRect();
     const btnRect = noBtn.getBoundingClientRect();
-
-    // Compute max positions inside dodgeArea
     const maxX = areaRect.width - btnRect.width;
     const maxY = areaRect.height - btnRect.height;
-
-    // Random position within bounds
     const x = Math.max(0, Math.floor(Math.random() * (maxX + 1)));
     const y = Math.max(0, Math.floor(Math.random() * (maxY + 1)));
-
     noBtn.style.left = x + "px";
     noBtn.style.top  = y + "px";
     noBtn.style.transform = "translate(0,0)";
   }
 
-  // Dodge on hover or mouse move near it
   noBtn.addEventListener("mouseenter", moveNoButton);
   noBtn.addEventListener("mouseover", moveNoButton);
   dodgeArea.addEventListener("mousemove", (e) => {
-    // If cursor gets within ~80px of the No button, move it
     const btn = noBtn.getBoundingClientRect();
     const dx = (btn.left + btn.width/2) - e.clientX;
     const dy = (btn.top + btn.height/2) - e.clientY;
@@ -240,81 +252,52 @@
     if(dist < 90) moveNoButton();
   });
 
-  // ---------- Page 3 (Music starts on final Yes) ----------
+  // ---------- Confetti ----------
+  function launchConfetti() {
+    const duration = 2500;
+    const end = Date.now() + duration;
+
+    (function frame() {
+      confetti({ particleCount: 7, angle: 60, spread: 60, origin: { x: 0 } });
+      confetti({ particleCount: 7, angle: 120, spread: 60, origin: { x: 1 } });
+
+      if (Date.now() < end) requestAnimationFrame(frame);
+    })();
+  }
+
+  // ---------- Page 3 (Music + Confetti + Big Pic) ----------
   const finalYesButtons = document.querySelectorAll(".finalYes");
   const song = document.getElementById("loveSong");
+  const surpriseWrap = document.getElementById("surpriseWrap");
+  const finalButtonsRow = document.getElementById("finalButtonsRow");
 
-const surpriseWrap = document.getElementById("surpriseWrap");
-let alreadyTriggered = false;
+  let alreadyTriggered = false;
 
-finalYesButtons.forEach(btn => {
-  btn.addEventListener("click", async () => {
-    if (alreadyTriggered) return; // prevents multiple triggers
-    alreadyTriggered = true;
+  finalYesButtons.forEach(btn => {
+    btn.addEventListener("click", async () => {
+      if (alreadyTriggered) return;
+      alreadyTriggered = true;
 
-    try{
-      await song.play();
-      launchConfetti();
+      try{
+        await song.play();
+        launchConfetti();
 
-      // Show the big image + message
-      surpriseWrap.classList.remove("hidden");
+        // Show surprise
+        surpriseWrap.classList.remove("hidden");
 
-      // Optional: hide the Yes buttons after clicking
-      finalYesButtons.forEach(b => b.style.display = "none");
+        // Hide final buttons
+        finalButtonsRow.classList.add("hidden");
 
-    }catch(err){
-      alreadyTriggered = false;
-      alert("If the song didn’t start, tap again (some phones require it).");
-    }
+      }catch(err){
+        alreadyTriggered = false;
+        alert("If the song didn’t start, tap again (some phones require it).");
+      }
+    });
   });
-});
-
-
-  // 🎉 CONFETTI FUNCTION
-function launchConfetti() {
-  const duration = 2.5 * 1000;
-  const end = Date.now() + duration;
-
-  (function frame() {
-    confetti({
-      particleCount: 6,
-      angle: 60,
-      spread: 55,
-      origin: { x: 0 }
-    });
-    confetti({
-      particleCount: 6,
-      angle: 120,
-      spread: 55,
-      origin: { x: 1 }
-    });
-
-    if (Date.now() < end) {
-      requestAnimationFrame(frame);
-    }
-  })();
-}
-    <!-- Big surprise image + message (hidden until final Yes) -->
-  <div id="surpriseWrap" class="hidden" style="margin-top:18px;">
-    <img
-      src="capyrose.png"
-      alt="Capybara with roses"
-      style="
-        width: min(92vw, 520px);
-        max-height: 70vh;
-        object-fit: contain;
-        border-radius: 18px;
-        box-shadow: 0 20px 40px rgba(0,0,0,.18);
-      "
-    />
-    <p style="margin:14px 0 0; font-size:18px; font-weight:700;">
-      Here you go my sexy valentine ❤️🤗
-    </p>
-  </div>
-
 </script>
 
 </body>
 </html>
+
 
 
