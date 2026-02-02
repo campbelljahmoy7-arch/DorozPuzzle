@@ -244,16 +244,31 @@
   const finalYesButtons = document.querySelectorAll(".finalYes");
   const song = document.getElementById("loveSong");
 
- finalYesButtons.forEach(btn => {
+const surpriseWrap = document.getElementById("surpriseWrap");
+let alreadyTriggered = false;
+
+finalYesButtons.forEach(btn => {
   btn.addEventListener("click", async () => {
+    if (alreadyTriggered) return; // prevents multiple triggers
+    alreadyTriggered = true;
+
     try{
       await song.play();
-      launchConfetti(); // 🎉 CONFETTI HERE
+      launchConfetti();
+
+      // Show the big image + message
+      surpriseWrap.classList.remove("hidden");
+
+      // Optional: hide the Yes buttons after clicking
+      finalYesButtons.forEach(b => b.style.display = "none");
+
     }catch(err){
+      alreadyTriggered = false;
       alert("If the song didn’t start, tap again (some phones require it).");
     }
   });
 });
+
 
   // 🎉 CONFETTI FUNCTION
 function launchConfetti() {
@@ -279,8 +294,27 @@ function launchConfetti() {
     }
   })();
 }
+    <!-- Big surprise image + message (hidden until final Yes) -->
+  <div id="surpriseWrap" class="hidden" style="margin-top:18px;">
+    <img
+      src="capyrose.png"
+      alt="Capybara with roses"
+      style="
+        width: min(92vw, 520px);
+        max-height: 70vh;
+        object-fit: contain;
+        border-radius: 18px;
+        box-shadow: 0 20px 40px rgba(0,0,0,.18);
+      "
+    />
+    <p style="margin:14px 0 0; font-size:18px; font-weight:700;">
+      Here you go my sexy valentine ❤️🤗
+    </p>
+  </div>
+
 </script>
 
 </body>
 </html>
+
 
