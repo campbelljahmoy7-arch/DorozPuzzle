@@ -1,11 +1,7 @@
 
-Conversations
-55% of 15 GB used
-Terms · Privacy · Program Policies
-Last account activity: in 1 hour
-Details
 <!DOCTYPE html>
 <html lang="en">
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
@@ -131,8 +127,8 @@ Details
   <!-- PAGE 1 -->
   <div class="card" id="page1">
     <img class="capy" src="capybara.png" alt="Capybara" />
-    <h1>Hey my capybara 🐹</h1>
-    <p>Convert this binary into English:</p>
+    <h1>Hey my capybara </h1>
+    <p>Convert this binary code into English:</p>
 
     <!-- "May 18, 2025" in ASCII binary -->
     <div class="mono">
@@ -146,7 +142,7 @@ Details
     <div class="btnRow">
       <button id="unlockBtn">Unlock</button>
     </div>
-    <p class="smallNote">(It's an important date)</p>
+    <p class="smallNote">(<3)</p>
   </div>
 
   <!-- PAGE 2 -->
@@ -161,7 +157,7 @@ Details
       <button id="noBtn">No</button>
     </div>
 
-    <p class="smallNote">Try to press “No”… if you can 😏</p>
+    <p class="smallNote">Try to press No … if you can 😏</p>
   </div>
 
   <!-- PAGE 3 -->
@@ -178,7 +174,7 @@ Details
       <source src="grown_and_sexy.mp3" type="audio/mpeg">
     </audio>
 
-    <p class="smallNote">🎶 Dance wid me!”.</p>
+    <p class="smallNote">.</p>
   </div>
 
 <script>
@@ -248,16 +244,43 @@ Details
   const finalYesButtons = document.querySelectorAll(".finalYes");
   const song = document.getElementById("loveSong");
 
-  finalYesButtons.forEach(btn => {
-    btn.addEventListener("click", async () => {
-      try{
-        await song.play();
-      }catch(err){
-        alert("If the song didn’t start, tap again (some phones require it).");
-      }
-    });
+ finalYesButtons.forEach(btn => {
+  btn.addEventListener("click", async () => {
+    try{
+      await song.play();
+      launchConfetti(); // 🎉 CONFETTI HERE
+    }catch(err){
+      alert("If the song didn’t start, tap again (some phones require it).");
+    }
   });
+});
+
+  // 🎉 CONFETTI FUNCTION
+function launchConfetti() {
+  const duration = 2.5 * 1000;
+  const end = Date.now() + duration;
+
+  (function frame() {
+    confetti({
+      particleCount: 6,
+      angle: 60,
+      spread: 55,
+      origin: { x: 0 }
+    });
+    confetti({
+      particleCount: 6,
+      angle: 120,
+      spread: 55,
+      origin: { x: 1 }
+    });
+
+    if (Date.now() < end) {
+      requestAnimationFrame(frame);
+    }
+  })();
+}
 </script>
 
 </body>
 </html>
+
