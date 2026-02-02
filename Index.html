@@ -1,0 +1,263 @@
+
+Conversations
+55% of 15 GB used
+Terms · Privacy · Program Policies
+Last account activity: in 1 hour
+Details
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>For My Capybara</title>
+  <style>
+    :root{
+      --bg1:#ffdde1;
+      --bg2:#ee9ca7;
+      --card:#ffffff;
+      --text:#333;
+      --btn:#e63946;
+      --btnHover:#d62828;
+    }
+
+    body{
+      margin:0;
+      min-height:100vh;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-family: Arial, Helvetica, sans-serif;
+      background: linear-gradient(135deg, var(--bg1), var(--bg2));
+      color:var(--text);
+      overflow:hidden;
+    }
+
+    .card{
+      width:min(92vw, 440px);
+      background:var(--card);
+      border-radius:18px;
+      padding:26px;
+      text-align:center;
+      box-shadow:0 20px 40px rgba(0,0,0,.15);
+      position:relative;
+    }
+
+    .hidden{ display:none; }
+
+    .capy{
+      width:160px;
+      height:auto;
+      margin:0 auto 6px;
+      display:block;
+    }
+
+    h1{ margin:10px 0 10px; }
+    p{ margin:10px 0; }
+
+    .mono{
+      font-family: monospace;
+      line-height:1.6;
+      font-size:15px;
+      background: rgba(0,0,0,0.03);
+      border-radius:12px;
+      padding:12px;
+    }
+
+    input{
+      width:85%;
+      max-width:320px;
+      padding:10px 12px;
+      border:1px solid #ccc;
+      border-radius:12px;
+      font-size:16px;
+      outline:none;
+    }
+
+    .hint{
+      font-size:14px;
+      color:#666;
+      margin-top:8px;
+    }
+
+    .btnRow{
+      display:flex;
+      gap:12px;
+      justify-content:center;
+      flex-wrap:wrap;
+      margin-top:12px;
+    }
+
+    button{
+      padding:10px 18px;
+      border:none;
+      border-radius:12px;
+      background:var(--btn);
+      color:white;
+      font-size:16px;
+      cursor:pointer;
+      min-width:110px;
+    }
+
+    button:hover{
+      background:var(--btnHover);
+    }
+
+    /* No button dodge mode */
+    .dodgeArea{
+      position:relative;
+      width:100%;
+      height:120px;
+      margin-top:10px;
+    }
+
+    #noBtn{
+      position:absolute;
+      left:50%;
+      top:50%;
+      transform: translate(-50%, -50%);
+      background:#555;
+    }
+    #noBtn:hover{ background:#444; }
+
+    .smallNote{
+      font-size:12px;
+      color:#777;
+      margin-top:6px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- PAGE 1 -->
+  <div class="card" id="page1">
+    <img class="capy" src="capybara.png" alt="Capybara" />
+    <h1>Hey my capybara 🐹</h1>
+    <p>Convert this binary into English:</p>
+
+    <!-- "May 18, 2025" in ASCII binary -->
+    <div class="mono">
+      01001101 01100001 01111001 00100000<br>
+      00110001 00111000 00101100 00100000<br>
+      00110010 00110000 00110010 00110101
+    </div>
+
+    <p class="hint">Hint: it’s a date 😉</p>
+    <input id="codeInput" placeholder="Type the decoded date here" />
+    <div class="btnRow">
+      <button id="unlockBtn">Unlock</button>
+    </div>
+    <p class="smallNote">(It's an important date)</p>
+  </div>
+
+  <!-- PAGE 2 -->
+  <div class="card hidden" id="page2">
+    <h1>Will you be my Valentine, Starr? ❤️</h1>
+
+    <div class="btnRow">
+      <button id="yesBtn">Yes</button>
+    </div>
+
+    <div class="dodgeArea" id="dodgeArea">
+      <button id="noBtn">No</button>
+    </div>
+
+    <p class="smallNote">Try to press “No”… if you can 😏</p>
+  </div>
+
+  <!-- PAGE 3 -->
+  <div class="card hidden" id="page3">
+    <h1>Estas segura?? 😏</h1>
+    <p>Choose carefully… 😌</p>
+
+    <div class="btnRow">
+      <button class="finalYes">Yes</button>
+      <button class="finalYes">Yes</button>
+    </div>
+
+    <audio id="loveSong" loop preload="auto">
+      <source src="grown_and_sexy.mp3" type="audio/mpeg">
+    </audio>
+
+    <p class="smallNote">🎶 Dance wid me!”.</p>
+  </div>
+
+<script>
+  // ---------- Helpers ----------
+  function showPage(id){
+    ["page1","page2","page3"].forEach(p => document.getElementById(p).classList.add("hidden"));
+    document.getElementById(id).classList.remove("hidden");
+  }
+
+  // ---------- Page 1 (Binary puzzle) ----------
+  const unlockBtn = document.getElementById("unlockBtn");
+  const codeInput = document.getElementById("codeInput");
+
+  unlockBtn.addEventListener("click", () => {
+    const val = codeInput.value.trim().toLowerCase();
+    if(val === "may 18, 2025"){
+      showPage("page2");
+    }else{
+      alert("Not sah 👀 Try again.");
+    }
+  });
+
+  // Enter key works too
+  codeInput.addEventListener("keydown", (e) => {
+    if(e.key === "Enter") unlockBtn.click();
+  });
+
+  // ---------- Page 2 (Yes / No dodge) ----------
+  const yesBtn = document.getElementById("yesBtn");
+  const noBtn  = document.getElementById("noBtn");
+  const dodgeArea = document.getElementById("dodgeArea");
+
+  yesBtn.addEventListener("click", () => {
+    showPage("page3");
+  });
+
+  function moveNoButton(){
+    const areaRect = dodgeArea.getBoundingClientRect();
+    const btnRect = noBtn.getBoundingClientRect();
+
+    // Compute max positions inside dodgeArea
+    const maxX = areaRect.width - btnRect.width;
+    const maxY = areaRect.height - btnRect.height;
+
+    // Random position within bounds
+    const x = Math.max(0, Math.floor(Math.random() * (maxX + 1)));
+    const y = Math.max(0, Math.floor(Math.random() * (maxY + 1)));
+
+    noBtn.style.left = x + "px";
+    noBtn.style.top  = y + "px";
+    noBtn.style.transform = "translate(0,0)";
+  }
+
+  // Dodge on hover or mouse move near it
+  noBtn.addEventListener("mouseenter", moveNoButton);
+  noBtn.addEventListener("mouseover", moveNoButton);
+  dodgeArea.addEventListener("mousemove", (e) => {
+    // If cursor gets within ~80px of the No button, move it
+    const btn = noBtn.getBoundingClientRect();
+    const dx = (btn.left + btn.width/2) - e.clientX;
+    const dy = (btn.top + btn.height/2) - e.clientY;
+    const dist = Math.sqrt(dx*dx + dy*dy);
+    if(dist < 90) moveNoButton();
+  });
+
+  // ---------- Page 3 (Music starts on final Yes) ----------
+  const finalYesButtons = document.querySelectorAll(".finalYes");
+  const song = document.getElementById("loveSong");
+
+  finalYesButtons.forEach(btn => {
+    btn.addEventListener("click", async () => {
+      try{
+        await song.play();
+      }catch(err){
+        alert("If the song didn’t start, tap again (some phones require it).");
+      }
+    });
+  });
+</script>
+
+</body>
+</html>
